@@ -186,5 +186,6 @@
         }
     }
 
+    loadFolderPath();
     expressionPanel(thisObj);
 })(this);
