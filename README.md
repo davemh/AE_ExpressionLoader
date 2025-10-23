@@ -1,6 +1,6 @@
 # Expression Loader for After Effects
 
-![print.png](https://i.postimg.cc/W4BF05TF/print.png)
+![screenshot-AE-Expression-Loader-w-Search-Box.png](https://i.postimg.cc/25SNfYBN/screenshot-AE-Expression-Loader-w-Search-Box.png)
 ## Overview
 
 Expression Loader is an After Effects addon designed to simplify the application of expressions by creating a centralized library of reusable expressions. This tool enhances your workflow by allowing you to easily manage and apply expressions directly within After Effects.
@@ -9,6 +9,7 @@ Expression Loader is an After Effects addon designed to simplify the application
 
 - **Expression Library**: Organize your expressions in a dedicated folder and access them easily from within After Effects.
 - **Customizable Variables**: Automatically detects and allows customization of variables wrapped in `{{variable}}` within your expression files.
+- **Live Search**: Live search box allows you to search filenames in your dedicated folder to find expressions quickly.
 - **Dockable Panel**: Integrated directly into After Effects as a dockable panel for convenient access.
 - **Open Source**: Free to use and open for contributions. Improve and extend the tool as needed!
 
@@ -35,6 +36,7 @@ Expression Loader is an After Effects addon designed to simplify the application
    - The panel will list all `.txt` files available in the selected folder.
 
 4. **Choose and Apply Expressions**:
+   - Browse list manually or use search box to filter expressions by filename.
    - Select an expression file from the list.
    - The panel will display input fields for variables wrapped in `{{variable}}`. Customize these values as needed.
    - Click the "Apply Expression" button to apply the expression with the customized values to your selected properties in After Effects.
@@ -76,3 +78,4 @@ Expression Loader is licensed under the [MIT License](LICENSE.md). Feel free to 
 For any questions or support, please reach out via [GitHub Issues](https://github.com/AlexOliveiraaDev/AE_ExpressionLoader/issues).
 
 Happy animating!
+

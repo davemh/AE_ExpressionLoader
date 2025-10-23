@@ -27,6 +27,23 @@
     var folderText = folderGroup.add("edittext", [0, 0, 300, 20], folderPath);
     var browseButton = folderGroup.add("button", undefined, "Browse");
 
+  // Let's add a Search box!
+  //
+  // This will make it easier to find expressions quickly,
+  // for users with *many* .txt files in their chosen folder path.
+  // Search box text input is used as the filter string
+  // when populating the list of matching .txt files.
+  //
+  // Typing in the box triggers onChanging,
+  // calls updateFileList with the typed text,
+  // and live-filters the list of filenames.
+  var searchGroup = mainGroup.add("group");
+  searchGroup.orientation = "row";
+  searchGroup.add("statictext", undefined, "Search:");
+  var searchBox = searchGroup.add("edittext", [0, 0, 200, 20], "");
+  // The "Clear" button clears any inputted text and refreshes the list with no filter.
+  var clearButton = searchGroup.add("button", undefined, "Clear");
+
     var listGroup = mainGroup.add("group");
     var listbox = listGroup.add("listbox", [0, 0, 300, 150]);
     var optionGroup = mainGroup.add("group");
@@ -47,15 +64,40 @@
 
     var applyButton = mainGroup.add("button", undefined, "Apply Expression");
 
-    function updateFileList() {
+    // The updateFileList function reads the selected folder for *.txt files and
+    // populates the listbox. If a filter string is provided, it performs a
+    // case-insensitive substring match against each filename and only shows
+    // matching items. The function uses a simple defensive try/catch around the
+    // comparison to skip any problematic filenames.
+    //
+    // Inputs:
+    // - filter (string): optional; when empty all files are shown.
+    //   When non-empty each filename is lowercased and tested with indexOf(filterLower) !== -1.
+    //
+    // Side Effects:
+    // - Clears and repopulates `listbox` with matching filenames.
+    function updateFileList(filter) {
+      filter = filter || "";
       listbox.removeAll();
       if (folderText.text != "") {
         var folder = new Folder(folderText.text);
         if (folder.exists) {
+          // Get all .txt files in the chosen folderPath
           var files = folder.getFiles("*.txt");
           for (var i = 0; i < files.length; i++) {
+            // Convert any URL-encoded spaces back to real spaces for display
             var fileName = files[i].name.replace(/%20/g, " ");
-            listbox.add("item", fileName);
+            try {
+              // Empty filter? Include all files.
+              // Otherwise, perform a case-insensitive substring match
+              // to decide whether to add this filename to the list of matching .txt files.
+              if (filter == "" || fileName.toLowerCase().indexOf(filter.toLowerCase()) !== -1) {
+                listbox.add("item", fileName);
+              }
+            } catch (e) {
+              // Ignore comparison errors and continue; this prevents a single
+              // malformed filename from breaking the entire list.
+            }
           }
         }
       }
@@ -97,12 +139,26 @@
       if (folder) {
         folderText.text = folder.fsName;
         saveFolderPath(folder.fsName);
-        updateFileList();
+        updateFileList(searchBox.text);
       }
     };
 
     refreshButton.onClick = function () {
-      updateFileList();
+      updateFileList(searchBox.text);
+    };
+
+    // Live-filter .txt file results as the user types.
+    // onChanging fires for each change, sends search box text to updateFileList
+    // (which handles the case-insensitive match),
+    // so the file list updates in real time (no need to hit ENTER).
+    searchBox.onChanging = function () {
+      updateFileList(this.text);
+    };
+
+    // Clear the search box on button click, and refresh the list with no filter.
+    clearButton.onClick = function () {
+      searchBox.text = "";
+      updateFileList("");
     };
 
     listbox.onChange = function () {
@@ -152,7 +208,7 @@
       }
     };
 
-    updateFileList();
+  updateFileList(searchBox.text);
     win.layout.layout(true);
     win.onResizing = win.onResize = function () {
       this.layout.resize();
